@@ -20,7 +20,7 @@ function printDate(date){
 
 function printFilm(film){
     console.log(`Id: ${film.id}, Title: ${film.title},`,
-    `Favorite: ${film.favorite}, Watch date: ${printDate(film.date)}, Score: ${film.score}` );
+    `Favorite: ${film.favorite}, Watch date: ${printDate(film.date)}, Score: ${film.score || '<not assigned>'}` );
 }
 
 function FilmLibrary(){
