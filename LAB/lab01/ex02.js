@@ -42,6 +42,16 @@ function FilmLibrary(){
           });
          return copy;
     };
+    this.deleteFilm = (id) => {
+        films = films.filter( element => element.id !== id);
+    };
+    this.resetWatchedFilms = () => {
+        films.forEach(element => { element.date = null; });
+    };
+    this.getRated = () => {
+        films = films.filter(element => {return element.score !== null;}).sort( (f1, f2)=>{return f2.score - f1.score});
+        this.print();
+    };
     this.print = (vect=films) => { console.log('***** List of films *****'); vect.forEach(element => { printFilm(element) }); console.log('\n');};
 }
 
@@ -60,9 +70,24 @@ function main(){
     filmLibrary.addNewFilm(f4);
     filmLibrary.addNewFilm(f5);
 
+    console.log('Initial Values: ');
     filmLibrary.print();
 
+    console.log('SortByDate Values: ');
     filmLibrary.print(filmLibrary.sortByDate());
+    //                          ^^^^^^^^^^^^^^ returning a NEW ARRAY which is sorted by means of date
+    
+    console.log('Deleting Value by Id: ');
+    filmLibrary.deleteFilm(4);
+    filmLibrary.print();
+
+    console.log('Values by Score: ');
+    filmLibrary.getRated(); // print inside the method
+    
+    console.log('Values with resetted Dates: ');
+    filmLibrary.resetWatchedFilms();
+    filmLibrary.print();
+    
 }
 
 main();
