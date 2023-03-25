@@ -33,7 +33,7 @@
       </span>
       
       <!-- Search form -->
-      <form class="collapse form-inline my-2 my-lg-0 mx-auto d-md-block" action="#" role="search" aria-label="Quick search">
+      <form class="form-inline my-2 my-lg-0 mx-auto d-none d-md-block" action="#" role="search" aria-label="Quick search">
         <input class="form-control me-md-2" type="search" placeholder="Search" aria-label="Search query">
       </form>
 
@@ -61,7 +61,11 @@
             <a href="#" id="filter-best" class="list-group-item list-group-item-action">Best Rated</a>
             <a href="#" id="filter-seen-last-month"class="list-group-item list-group-item-action">Seen Last Month</a>
             <a href="#" id="filter-unseen" class="list-group-item list-group-item-action">Unseen</a>
-            
+            <div class="collapse list-group-item" id="left-sidebar">
+              <form class="form-inline my-2 my-lg-0 mx-auto d-md-block" action="#" role="search" aria-label="Quick search">
+                <input class="form-control me-md-2" type="search" placeholder="Search" aria-label="Search query">
+              </form>
+            </div>
           </div>
         </aside>
 
