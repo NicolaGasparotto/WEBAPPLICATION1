@@ -54,89 +54,90 @@ function FilmLibrary(){
         this.print();
     };
     this.print = (vect=films) => { console.log('***** List of films *****'); vect.forEach(element => { printFilm(element) }); console.log('\n');};
-}
 
-const db = new sqlite.Database('films.db', (err) => {
-    if(err) throw err;
-});
-
-function getAllFilm(){
-    return new Promise((resolve, reject)=>{
-        const sql = 'SELECT * FROM films';
-        db.all(sql, (err, rows)=>{
-            if(err)
-                reject(err);
-            else{
-                const films = rows.map(row => new Film(row.id, row.title, row.favorite, row.watchdate, row.rating));
-                resolve(films);
-            }
-        });
+    const db = new sqlite.Database('films.db', (err) => {
+        if(err) throw err;
     });
-}
-
-function getAllFavorite(){
-    return new Promise((resolve, reject)=>{
-        const sql = 'SELECT * FROM films WHERE favorite=1';
-        db.all(sql, (err, rows)=>{
-            if(err)
-                reject(err);
-            else{
-                const films = rows.map(row => new Film(row.id, row.title, row.favorite, row.watchdate, row.rating));
-                resolve(films);
-            }
+    
+    this.getAllFilm = () => {
+        return new Promise((resolve, reject)=>{
+            const sql = 'SELECT * FROM films';
+            db.all(sql, (err, rows)=>{
+                if(err)
+                    reject(err);
+                else{
+                    const films = rows.map(row => new Film(row.id, row.title, row.favorite, row.watchdate, row.rating));
+                    resolve(films);
+                }
+            });
         });
-    });
-}
-
-function getAllTodayWatched(today){
-    return new Promise((resolve, reject)=>{
-        const sql = 'SELECT * FROM films WHERE watchdate=?';
-        db.all(sql, [today], (err, rows)=>{
-            if(err)
-                reject(err);
-            else{
-                const films = rows.map(row => new Film(row.id, row.title, row.favorite, row.watchdate, row.rating));
-                resolve(films);
-            }
+    }
+    
+    this.getAllFavorite = () => {
+        return new Promise((resolve, reject)=>{
+            const sql = 'SELECT * FROM films WHERE favorite=1';
+            db.all(sql, (err, rows)=>{
+                if(err)
+                    reject(err);
+                else{
+                    const films = rows.map(row => new Film(row.id, row.title, row.favorite, row.watchdate, row.rating));
+                    resolve(films);
+                }
+            });
         });
-    });
+    }
+    
+    this.getAllTodayWatched = (today) => {
+        return new Promise((resolve, reject)=>{
+            const sql = 'SELECT * FROM films WHERE watchdate=?';
+            db.all(sql, [today], (err, rows)=>{
+                if(err)
+                    reject(err);
+                else{
+                    const films = rows.map(row => new Film(row.id, row.title, row.favorite, row.watchdate, row.rating));
+                    resolve(films);
+                }
+            });
+        });
+    }
+    
+    this.getAllFilmSince = (date) => {
+    
+    }
+    
+    this.getFilmGreaterScore = (score) => {
+    
+    }
+    
+    this.getFilmsIncludingTitle = (subStringTitle)=>{
+    
+    }
 }
 
-function getAllFilmSince(date){
 
-}
 
-function getFilmGreaterScore(score){
 
-}
-
-function getFilmsIncludingTitle(subStringTitle){
-
-}
-
-function main(){
+async function main(){
     /* Function to Testing */
-    let films = getAllFilm()
+    let filmLibrary = new FilmLibrary();
+
+    let films = filmLibrary.getAllFilm()
                 .then(f => {
-                    let filmLibrary = new FilmLibrary();
-                    f.forEach(element => filmLibrary.addNewFilm(element));
-                    filmLibrary.print();
+                    
+                    filmLibrary.print(f);
                 });
     
-    let favorites = getAllFavorite()
+    let favorites = filmLibrary.getAllFavorite()
                     .then(f => {
-                        let filmLibrary = new FilmLibrary();
-                        f.forEach(element => filmLibrary.addNewFilm(element));
-                        filmLibrary.print();
+                        filmLibrary.print(f);
                     });
 
-    let todayFilms = getAllTodayWatched('2023-03-10') 
+    let todayFilms = filmLibrary.getAllTodayWatched('2023-03-10') 
                     .then(f => {
-                        let filmLibrary = new FilmLibrary();
-                        f.forEach(element => filmLibrary.addNewFilm(element));
-                        filmLibrary.print();
+                        filmLibrary.print(f);
                     });
+    
+                    
+
 }
-
 main();
-db.close();
