@@ -123,7 +123,6 @@ async function main(){
 
     let films = filmLibrary.getAllFilm()
                 .then(f => {
-                    
                     filmLibrary.print(f);
                 });
     
@@ -136,8 +135,6 @@ async function main(){
                     .then(f => {
                         filmLibrary.print(f);
                     });
-    
-                    
-
 }
 main();
+
