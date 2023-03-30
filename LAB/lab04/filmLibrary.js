@@ -1,6 +1,6 @@
 'use strict';
 
-const dayjs = require("dayjs");
+// const dayjs = require("dayjs");
 
 // obj Film
 function Film(id, title, favorite=false, date=null, score=null){
@@ -25,7 +25,7 @@ function printFilm(film){
 
 function FilmLibrary(){
     this.films = [];
-    this.addNewFilm = (film) => { this.films.push(film); };
+    this.addNewFilm = film => { this.films.push(film) };
     this.sortByDate = () =>{ 
         let copy = [...this.films]; 
         
@@ -76,49 +76,3 @@ function FilmLibrary(){
     this.print = (vect=this.films) => { console.log('***** List of this.films *****'); vect.forEach(element => { printFilm(element) }); console.log('\n');};
 }
 
-function main(){
-    /* Function to Testing */
-    let f1 = new Film(1, 'Pulp Finction', true, '03-17-2023', 5);
-    let f2 = new Film(2, 'Pulp Finction', true, '03-12-2023', 4);
-    let f3 = new Film(3, 'Pulp Finction', false, null);
-    let f4 = new Film(4, 'Pulp Finction', false, null);
-    let f5 = new Film(5, 'Pulp Finction', false, 'March 30, 2023', 3);
-
-    let filmLibrary = new FilmLibrary();
-    filmLibrary.addNewFilm(f1);
-    filmLibrary.addNewFilm(f2);
-    filmLibrary.addNewFilm(f3);
-    filmLibrary.addNewFilm(f4);
-    filmLibrary.addNewFilm(f5);
-
-    const prova = filmLibrary.getBestFilms();
-
-    
-
-    for(const filmo of filmLibrary.getBestFilms()){
-        console.log(filmo);
-    }
-
-    console.log('fine');
-    /*
-    console.log('Initial Values: ');
-    filmLibrary.print();
-
-    console.log('SortByDate Values: ');
-    filmLibrary.print(filmLibrary.sortByDate());
-    //                          ^^^^^^^^^^^^^^ returning a NEW ARRAY which is sorted by means of date
-    
-    console.log('Deleting Value by Id: ');
-    filmLibrary.deleteFilm(4);
-    filmLibrary.print();
-
-    console.log('Values by Score: ');
-    filmLibrary.getRated(); // print inside the method
-    
-    console.log('Values with resetted Dates: ');
-    filmLibrary.resetWatchedFilms();
-    filmLibrary.print();
-    */
-}
-
-main();
