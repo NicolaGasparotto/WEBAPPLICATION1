@@ -57,6 +57,16 @@ function displayFilmTable(title, filmList){
     }
 }
 
+function clearTable(){
+    const tableBody = document.getElementById('tBodyFilmsTable');
+    tableBody.innerHTML = ' ';
+}
+
+function clearAndSetActiveButton(buttonId){
+    document.querySelectorAll('#left-sidebar div a ').forEach( node => node.classList.remove('active'));
+    document.getElementById(buttonId).classList.add('active');
+}
+
 document.addEventListener('DOMContentLoaded', (event)=>{
 
     const unseen = document.getElementById('filter-unseen');
@@ -65,19 +75,31 @@ document.addEventListener('DOMContentLoaded', (event)=>{
     const all = document.getElementById('filter-all');
     const favorites = document.getElementById('filter-favorites');
 
+    displayFilmTable('All', filmLibrary.films);
+
     all.addEventListener('click', event => {
+        clearTable();
+        clearAndSetActiveButton('filter-all');
         displayFilmTable('All', filmLibrary.films);
     });
     favorites.addEventListener('click', event => {
-        displayFilmTable('Favorites', filmLibrary.getFavorites);
+        clearTable();
+        clearAndSetActiveButton('filter-favorites');
+        displayFilmTable('Favorites', filmLibrary.getFavorites());
     });
     best.addEventListener('click', event => {
-        displayFilmTable('Best Films', filmLibrary.getBestFilms);
+        clearTable();
+        clearAndSetActiveButton('filter-best');
+        displayFilmTable('Best Films', filmLibrary.getBestFilms());
     });
     lastMonth.addEventListener('click', event => {
-        displayFilmTable('Seen Last Month', filmLibrary.getLastMonthFilms);
+        clearTable();
+        clearAndSetActiveButton('filter-seen-last-month');
+        displayFilmTable('Seen Last Month', filmLibrary.getLastMonthFilms());
     });
     unseen.addEventListener('click', event => {
-        displayFilmTable('Unseen', filmLibrary.getUnseen);
+        clearTable();
+        clearAndSetActiveButton('filter-unseen');
+        displayFilmTable('Unseen', filmLibrary.getUnseen());
     });
 });

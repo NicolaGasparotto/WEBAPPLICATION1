@@ -58,13 +58,18 @@ function FilmLibrary(){
     };
 
     this.getBestFilms = () =>{
-        const bestFilms = this.films.filter(element => element.score > 5);
+        const bestFilms = this.films.filter(element => element.score > 4);
         return bestFilms;
     };
 
     this.getLastMonthFilms = () => {
         const lastMonthStart = dayjs().subtract(1, 'month').startOf('month');
-        const lastMonthFilm = this.films.filter(element => element.date.isBetween(lastMonthStart, dayjs(), null, '[]'));
+        const lastMonthFilm = this.films.filter(element => {
+            if(element.date == null) return false
+            const diff = element.date.diff(dayjs(),'month');
+            const ret = diff <= 0 && diff > -1 ;      // last month
+            return ret;
+        });
         return lastMonthFilm;
     };
 

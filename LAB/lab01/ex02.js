@@ -58,7 +58,7 @@ function FilmLibrary(){
     };
 
     this.getBestFilms = () =>{
-        const bestFilms = this.films.filter(element => element.score > 5);
+        const bestFilms = this.films.filter(element => element.score > 4);
         return bestFilms;
     };
 
@@ -78,24 +78,22 @@ function FilmLibrary(){
 
 function main(){
     /* Function to Testing */
-    let f1 = new Film(1, 'Pulp Finction', true, '03-17-2023', 5);
-    let f2 = new Film(2, 'Pulp Finction', true, '03-12-2023', 4);
-    let f3 = new Film(3, 'Pulp Finction', false, null);
-    let f4 = new Film(4, 'Pulp Finction', false, null);
-    let f5 = new Film(5, 'Pulp Finction', false, 'March 30, 2023', 3);
-
     let filmLibrary = new FilmLibrary();
-    filmLibrary.addNewFilm(f1);
-    filmLibrary.addNewFilm(f2);
-    filmLibrary.addNewFilm(f3);
-    filmLibrary.addNewFilm(f4);
-    filmLibrary.addNewFilm(f5);
-
-    const prova = filmLibrary.getBestFilms();
-
     
+    filmLibrary.addNewFilm(new Film(1, 'Pulp Finction', true, '03-17-2023', 5));
+    filmLibrary.addNewFilm(new Film(2, '21 Grams', true, '03-17-2023', 4));
+    filmLibrary.addNewFilm(new Film(5, 'Shrek', false, 'March 30, 2023', 3));
+    filmLibrary.addNewFilm(new Film(3, 'Star Wars', false));
+    filmLibrary.addNewFilm(new Film(4, 'Matrix', false));
 
     for(const filmo of filmLibrary.getBestFilms()){
+        console.log(filmo);
+    }
+
+    console.log('2');
+    const prova = filmLibrary.getUnseen();
+    console.log(typeof(prova), prova);
+    for(const filmo of filmLibrary.getFavorites()){
         console.log(filmo);
     }
 
