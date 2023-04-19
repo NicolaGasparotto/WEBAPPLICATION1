@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Badge, Button, Col, Form, Row, Table } from "react-bootstrap";
 
 function QuestionWithAnswers(props) {
@@ -32,6 +33,48 @@ function QuestionDetails(props) {
 }
 
 function AnswerDetails(props) {
+    // 2 possible solution to obtain sorting on the array passed from global variables:
+    
+    // real solution:
+    const [sorted, setSorted] = useState('none');
+
+    // LOCAL COMPUTATION -->  more expensive because every time the function is called the array is resorted and recomputed
+    // but if the sorting is put inside a function it doesn't happen every time so is generally a better idea
+    let sortedAnswers = [...props.answers];
+    let sortIcon = '-';
+
+    if(sorted === 'up'){
+        sortedAnswers.sort((a, b) => (a.score - b.score));
+        sortIcon = '^';
+    } else if(sorted === 'down'){
+        sortedAnswers.sort((a, b) => -(a.score - b.score));
+        sortIcon = 'v';
+    }
+    // in this way whenever the state sorted is CHANGED the callback is reccalled and recomputed
+
+    function sortedByScore(){
+        if(sorted === 'none')
+            setSorted('up');
+        if(sorted === 'up')
+            setSorted('down');
+        if(sorted === 'down')
+            setSorted('none');
+        
+        console.log('sorted');
+    }
+
+    // DERIEV STATE --> deriving a local state from a global ones
+    // generally a bad idea: (1- very difficult to track the changes; 2- duplication of information)
+    // const [sortedAnswers, setSortedAnswers] = useState(props.answer);
+    // function sortByScore(){
+    //     setSortedAnswers((old) =>{
+    //         let temp = [...old];
+    //         temp.sort((a, b) => -(a.score - b.score))
+    //         return temp
+    //     })
+    // }
+
+
     return <>
         <h2>Answers:</h2>
         <Table hover>
@@ -40,15 +83,14 @@ function AnswerDetails(props) {
                     <th scope="col">Date</th>
                     <th scope="col">Text</th>
                     <th scope="col">Author</th>
-                    <th scope="col">Score</th>
+                    <th scope="col" onClick={sortedByScore}>Score {sortIcon}</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                {props.answers.map(a => <AnswerRow key={a.id} answer={a} deleteAnswer={props.deleteAnswer} upVoteAnswer={props.upVoteAnswer} />)}
+                {sortedAnswers.map(a => <AnswerRow key={a.id} answer={a} deleteAnswer={props.deleteAnswer} upVoteAnswer={props.upVoteAnswer} />)}
             </tbody>
             <tfoot>
-                <NewAnswerForm />
             </tfoot>
         </Table>
     </>
@@ -63,32 +105,6 @@ function AnswerRow(props) {
         <td><Button variant='secondary' onClick={()=>{props.upVoteAnswer(props.answer.id)}}>VOTE</Button>{' '}
         <Button variant='warning' onClick={()=>{props.deleteAnswer(props.answer.id)}}>DELETE</Button></td>
     </tr>
-}
-
-function NewAnswerForm(props) {
-    return <tr>
-        <td><Form.Group controlId="answerDate">
-            <Form.Label className='fw-light'>Date</Form.Label>
-            <Form.Control type="date" name="date" placeholder="Enter date" />
-        </Form.Group></td>
-
-        <td><Form.Group controlId="answerText">
-            <Form.Label className='fw-light'>Answer text</Form.Label>
-            <Form.Control type="text" name="text" placeholder="Enter Answer" />
-        </Form.Group></td>
-
-        <td><Form.Group controlId="answerAuthor">
-            <Form.Label className='fw-light'>Author</Form.Label>
-            <Form.Control type="text" name="author" placeholder="Author's name" />
-        </Form.Group></td>
-
-        <td></td>
-        <td><Form.Group controlId="addButton">
-        <Form.Label className='fw-light'>&nbsp;</Form.Label><br/>
-            <Button variant='success' id="addbutton">ADD</Button>
-            </Form.Group>
-            </td>
-    </tr>;
 }
 
 export { QuestionWithAnswers };
