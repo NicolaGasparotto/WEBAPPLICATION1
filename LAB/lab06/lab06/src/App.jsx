@@ -21,8 +21,34 @@ import FilmTable from './components/FilmLibrary';
 
 function App() {
 
+  // This state contains the list of films
+  const [films, setFilms] = useState([...FILMS]);
+
   // This state contains the active filter
   const [activeFilter, setActiveFilter] = useState('filter-all');
+  
+  // all related functions to films state 
+  const deleteFilm = (id) => {
+    console.log('deleting film with id: ' + id + '...');
+    setFilms((oldFilms) => (oldFilms.filter((film) => (film.id !== id))) );
+    //console.log(films);
+  }
+
+  const addFilm = (film) => {
+    setFilms((oldFilms) => {
+      const newId = Math.max(...oldFilms.map(film => film.id)) + 1;
+      const newFilm = {id: newId, title: film.title, favorite: film.favorite, watchDate: dayjs(film.watchDate), rating: film.rating};
+      const tmpFilm = [...oldFilms, newFilm];
+      console.log(tmpFilm);
+      return tmpFilm;
+    });
+  }
+
+  const editFilm = (film) => {  
+    setFilms((oldFilms) => {
+      oldFilms.map((oldFilm) => (oldFilm.id === film.id ? film : oldFilm));
+    });
+  }
 
   /**
    * Defining a structure for Filters
@@ -64,8 +90,8 @@ function App() {
         <Col md={8} xl={9} className="below-nav">
           <h1 className="pb-3">Filter: <span className="notbold">{filters[activeFilter].label}</span></h1>
           <FilmTable activeFilter={filters[activeFilter].label}
-                     films={FILMS.filter(filters[activeFilter].filterFunction)}/>
-          <Button variant="primary" size="lg" className="fixed-right-bottom"> &#43; </Button>
+                     films={films.filter(filters[activeFilter].filterFunction)}
+                     deleteFilm={deleteFilm} addFilm={addFilm} editFilm={editFilm} />
         </Col>
       </Row>
 
