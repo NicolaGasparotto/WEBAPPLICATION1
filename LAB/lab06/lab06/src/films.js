@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 
 /* 
  * This data structure emulates a database of movies.
- * In the future these data will be retrieved from the server in the future
+ * In the future these data will be retrieved from the server
  */
 const FILMS = [
     { id: 1, title: "Pulp Fiction", favorite: true, watchDate: dayjs("2023-03-10"), rating: 5 },
