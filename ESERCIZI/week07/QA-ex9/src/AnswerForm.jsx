@@ -14,6 +14,10 @@ function AddOrEditAnswer(props) {
 
     const [err, setErr] = useState('')
 
+    if(props.mode==='edit') {
+        console.log(props.initialValue);
+    }
+
     function handleAdd() {
         if(text!=='' && author!=='') {
             props.handleAdd(date, text, author);
