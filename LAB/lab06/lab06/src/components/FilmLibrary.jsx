@@ -1,14 +1,20 @@
-import 'dayjs';
+import dayjs from "dayjs";
 import { Table, Form, Button } from 'react-bootstrap/'
 import { React, useState } from 'react';
-import { AddOrEditFilm } from './AddOrEdit';
+import { AddOrEditFilm } from './AddOrEditFilm';
 
+// TO DO:
+// 1. Edit functionality button
+// 2. Verification Modules
+// 3. ChekcBox Favorite functionality
+ 
 function FilmTable(props) {
 
   // This state contains the mode of the component
   // Possible values are: 'view', 'add', 'edit'
   const [mode, setMode] = useState('view');
   
+  // This state contains first a bool value to know if the film has been edited or Not then the values of the film to be edited
   const [editedFilm, setEditedFilm] = useState(false);
 
   function handleAdd(film) {
@@ -18,8 +24,8 @@ function FilmTable(props) {
   }
 
   function handleSave(film) {
-    console.log("Edit button clicked");
     props.editFilm(film);
+    console.log("Filme edited correctly");
     setMode('view');
   }
 
@@ -30,7 +36,8 @@ function FilmTable(props) {
 
   function handleEdit(id) {
     console.log("Edit button clicked");
-    setEditedFilm(props.films.filter((film) => (film.id === id))[0]);
+    console.log(id, props.films.filter((f) => (f.id === id))[0]);
+    setEditedFilm(props.films.filter((f) => (f.id === id))[0]);
     setMode('edit');
   }
 
@@ -64,10 +71,6 @@ function FilmTable(props) {
   
 function FilmRow(props) {
   
-    const formatWatchDate = (dayJsDate, format) => {
-      return dayJsDate ? dayJsDate.format(format) : '';
-    }
-    
     return(
       <tr>
         <td>
@@ -79,7 +82,7 @@ function FilmRow(props) {
           <Form.Check type="checkbox" label="Favorite" defaultChecked={props.filmData.favorite ? true : false}/>
         </td>
         <td>
-          <small>{formatWatchDate(props.filmData.watchDate, 'MMMM D, YYYY')}</small>
+          <small>{dayjs(props.filmData.watchDate).format('MMMM D, YYYY')}</small>
         </td>
         <td>
           <Rating rating={props.filmData.rating} maxStars={5}/>

@@ -23,7 +23,8 @@ function QuestionWithAnswers(props) {
     }
 
     function handleEdit(id) {
-        setEditedAnswer(props.answers.filter((a) => (a.id === id))[0])
+        setEditedAnswer(props.answers.filter((a) => (a.id === id))[0]);
+        console.log(editedAnswer);
         setMode('edit');
     }
     const q = props.question;

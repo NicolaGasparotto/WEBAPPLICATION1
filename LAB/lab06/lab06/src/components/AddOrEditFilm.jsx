@@ -5,17 +5,17 @@ import { Form, Button } from "react-bootstrap";
 function AddOrEditFilm(props) {
 
     const [date, setDate] = useState(
-        props.mode === "edit" ? props.filmData.watchingDate.format('DD-MM-YYYY') :  
+        props.mode === "edit" ? dayjs(props.initialValue.watchDate).format('YYYY-MM-DD') :  
         dayjs().format('DD-MM-YYYY') 
     );
     const [title, setTitle] = useState(
-        props.mode === "edit" ? props.filmData.title : ""
+        props.mode === "edit" ? props.initialValue.title : " "
     );
     const [score, setScore] = useState(
-        props.mode === "edit" ? props.filmData.score : 0
+        props.mode === "edit" ? props.initialValue.rating : 0
     );
     const [favorite, setFavorite] = useState(
-        props.mode === "edit" ? props.filmData.favorite : false
+        props.mode === "edit" ? props.initialValue.favorite : false
     );
     
     const [err, setErr] = useState('');
@@ -36,11 +36,11 @@ function AddOrEditFilm(props) {
     function handleSave(){
         if(title !== '' && score !== ''){
             props.handleSave({
-                id: props.filmData.id,
+                id: props.initialValue.id,
                 title: title,
                 favorite: favorite, 
                 watchDate: date, 
-                rating: score
+                rating: parseInt(score)
             });
         } else {
             setErr('Please fill all the fields modifying the film values');
@@ -64,6 +64,7 @@ function AddOrEditFilm(props) {
                 <Form.Control type="number" placeholder="Enter score" value={score} name="score" onChange={(ev) => setScore(ev.target.value)}/>
             </Form.Group>
 
+            <br/>
             <Form.Group controlId="filmFavorite">
                 <Form.Check type="checkbox" label="Favorite" checked={favorite} name="favorite" onChange={(ev) => setFavorite(ev.target.checked)}/>
             </Form.Group>

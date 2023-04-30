@@ -37,16 +37,25 @@ function App() {
   const addFilm = (film) => {
     setFilms((oldFilms) => {
       const newId = Math.max(...oldFilms.map(film => film.id)) + 1;
-      const newFilm = {id: newId, title: film.title, favorite: film.favorite, watchDate: dayjs(film.watchDate), rating: film.rating};
+      const newFilm = {id: newId, title: film.title, favorite: film.favorite, watchDate: dayjs(film.watchDate), rating: parseInt(film.rating)};
       const tmpFilm = [...oldFilms, newFilm];
-      console.log(tmpFilm);
+      // console.log(tmpFilm);
       return tmpFilm;
     });
   }
 
   const editFilm = (film) => {  
+    console.log(film);
     setFilms((oldFilms) => {
-      oldFilms.map((oldFilm) => (oldFilm.id === film.id ? film : oldFilm));
+      const tmpFilm = oldFilms.map((f) => {
+        if(f.id === film.id) {
+          return film;
+        } else {
+          return f;
+        }
+      });
+      // console.log(tmpFilm);
+      return tmpFilm;
     });
   }
 
