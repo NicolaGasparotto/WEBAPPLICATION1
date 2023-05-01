@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { Table, Form, Button } from 'react-bootstrap/'
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import { AddOrEditFilm } from './AddOrEditFilm';
 
 // TO DO:
@@ -58,7 +58,7 @@ function FilmTable(props) {
               </thead>
           <tbody>
             { films.map((film) => <FilmRow filmData={film} key={film.id} 
-                                          handleEdit={handleEdit} deleteFilm={props.deleteFilm}/>) }
+                                          handleEdit={handleEdit} deleteFilm={props.deleteFilm} handleSave={handleSave}/>) }
           </tbody>
         </Table>
         { mode === 'add' && <AddOrEditFilm mode={mode} handleAdd={handleAdd} handleCancel={handleCancel}/>}
@@ -70,7 +70,19 @@ function FilmTable(props) {
 }
   
 function FilmRow(props) {
-  
+    
+    const [isChecked, setIsChecked] = useState(props.filmData.favorite);
+    
+    useEffect(() => {
+      setIsChecked(props.filmData.favorite);
+    }, [props.filmData.favorite]);
+
+    const handleCheckboxChange = (event) => {
+      setIsChecked(event.target.checked);
+      props.filmData.favorite = event.target.checked;
+      props.handleSave(props.filmData);
+    };
+
     return(
       <tr>
         <td>
@@ -79,7 +91,7 @@ function FilmRow(props) {
           </p>
         </td>
         <td>
-          <Form.Check type="checkbox" label="Favorite" defaultChecked={props.filmData.favorite ? true : false}/>
+          <Form.Check type="checkbox" label="Favorite" checked={isChecked} onChange={handleCheckboxChange}/>
         </td>
         <td>
           <small>{dayjs(props.filmData.watchDate).format('MMMM D, YYYY')}</small>
