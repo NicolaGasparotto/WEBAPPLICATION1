@@ -1,4 +1,5 @@
 import {ListGroup} from 'react-bootstrap/';
+import { NavLink } from 'react-router-dom';
 
 /**
  * This components requires:
@@ -7,20 +8,21 @@ import {ListGroup} from 'react-bootstrap/';
  * - the handler to notify a new selection
  */ 
 const Filters = (props) => {
-  const {items, selected, onSelect} = props;
-
-  // Converting the object into an array to use map method
-  const filterArray = Object.entries(items);
+  const items = props.items;
+  const selected = props.selected;
 
   return (
     <ListGroup as="ul" variant="flush">
         {
-          filterArray.map(([filterName, { label }]) => {
+          Object.keys(items).map(filterName => {
             return (
-                <ListGroup.Item as="li" key={filterName} href={'#' + filterName} onClick={() => onSelect(filterName)}
-                action active={selected === filterName ? true : false} >
-                    {label}
-                </ListGroup.Item>
+              <NavLink key={filterName} to={`/filter/${filterName}`} style={{ textDecoration: 'none' }} onClick={() => props.setActiveFilter(filterName)}>
+              <ListGroup.Item as="li" key={filterName} 
+                action active={selected === filterName ? true : false} 
+                style={{border: '0.1', borderRadius: '4px'}}>
+                {filterName}
+              </ListGroup.Item>
+            </NavLink>
             );
           })
         }
