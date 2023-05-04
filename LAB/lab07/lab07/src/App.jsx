@@ -98,7 +98,7 @@ function DefaultLayout(props){
           <div className="d-md-block col-md-3 col-12 bg-light below-nav collapse" id="left-sidebar">
             <Col><Filters items={props.filters} selected={props.activeFilter} setActiveFilter={props.setActiveFilter}/></Col>
           </div>
-          <Col style={{marginTop: '5rem'}}>
+          <Col style={{marginTop: '5rem'}} >
             <Outlet />
           </Col>
         </Row>
