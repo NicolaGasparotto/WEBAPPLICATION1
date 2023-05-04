@@ -10,7 +10,6 @@ import { useState } from 'react';
 function HomePage(props){
     const filters = props.filters;
     const activeFilter = props.activeFilter;
-    const setActiveFilter = props.changeFilter;
     
     const [films, setFilms] = useState([...FILMS]);
 
@@ -49,13 +48,13 @@ function HomePage(props){
     return <Row className='vh-100'>
         <div className="d-md-block col-md-3 col-12 bg-light below-nav collapse" id="left-sidebar">
           <Col>
-          <Filters items={filters} selected={activeFilter} setFilter={setActiveFilter}/>
+          <Filters items={filters} selected={activeFilter}/>
           </Col>
         </div>
 
         <Col md={8} xl={9} className="below-nav">
-        <h1 className="pb-3">Filter: <span className="notbold">{activeFilter.label}</span></h1>
-          <FilmTable films={films.filter(filters[activeFilter.id].filterFunction)}
+        <h1 className="pb-3">Filter: <span className="notbold">{activeFilter}</span></h1>
+          <FilmTable films={films.filter(filters[activeFilter].filterFunction)}
                      deleteFilm={deleteFilm} addFilm={addFilm} editFilm={editFilm} />
         </Col>
     </Row>

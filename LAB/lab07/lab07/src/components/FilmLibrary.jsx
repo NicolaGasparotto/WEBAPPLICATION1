@@ -1,107 +1,68 @@
-import dayjs from "dayjs";
+import 'dayjs';
+
 import { Table, Form, Button } from 'react-bootstrap/'
-import { React, useState, useEffect } from 'react';
-import { AddOrEditFilm } from './AddOrEditFilm';
+import { useState } from 'react';
 
-// TO DO:
-// 1. Edit functionality button
-// 2. Verification Modules
-// 3. ChekcBox Favorite functionality
- 
-function FilmTable(props) {
+import FilmForm from './FilmForm';
 
-  // This state contains the mode of the component
-  // Possible values are: 'view', 'add', 'edit'
-  const [mode, setMode] = useState('view');
-  
-  // This state contains first a bool value to know if the film has been edited or Not then the values of the film to be edited
-  const [editedFilm, setEditedFilm] = useState(false);
+function FilmLibrary(props) {
+  const filteredFilms = props.films;
 
-  function handleAdd(film) {
-    console.log("Add button clicked");
-    props.addFilm(film);
-    setMode('view');
-  }
+  // This state is used for displaying the form
+  const [showForm, setShowForm] = useState(false);
 
-  function handleSave(film) {
-    props.editFilm(film);
-    console.log("Filme edited correctly");
-    setMode('view');
-  }
+  // This state stores the current film when an *edit* button is pressed.
+  const [editableFilm, setEditableFilm] = useState();
 
-  function handleCancel() {
-    console.log("Cancel button clicked");
-    setMode('view');
-  }
-
-  function handleEdit(id) {
-    console.log("Edit button clicked");
-    console.log(id, props.films.filter((f) => (f.id === id))[0]);
-    setEditedFilm(props.films.filter((f) => (f.id === id))[0]);
-    setMode('edit');
-  }
-
-  const films = props.films;
-  // const activeFilter = props.activeFilter; not used??
-  if(films){
-    return (
-      <>
-        <Table striped>
-          <thead >
-                  <tr>
-                      <th scope="col">Film Title</th>
-                      <th scope="col">Favourite</th>
-                      <th scope="col">Watching Date</th>
-                      <th scope="col">Score</th>
-                      <th scope="col">Actions</th>
-                  </tr>
-              </thead>
-          <tbody>
-            { films.map((film) => <FilmRow filmData={film} key={film.id} 
-                                          handleEdit={handleEdit} deleteFilm={props.deleteFilm} handleSave={handleSave}/>) }
-          </tbody>
-        </Table>
-        { mode === 'add' && <AddOrEditFilm mode={mode} handleAdd={handleAdd} handleCancel={handleCancel}/>}
-        { mode === 'edit' && <AddOrEditFilm mode={mode} initialValue={editedFilm} handleSave={handleSave} handleCancel={handleCancel}/>}
-        { mode === 'view' && <Button variant="primary" size="lg" className="fixed-right-bottom" onClick={ () => setMode('add') }> &#43; </Button>}
-      </>
-    );
-  }
+  return (
+    <>
+      <Table striped>
+        <tbody>
+          { filteredFilms.map((film) => <FilmRow key={film.id} filmData={film} setEditableFilm={setEditableFilm} setShowForm={setShowForm}/>) }
+        </tbody>
+      </Table>
+      {showForm ?
+        <FilmForm key={editableFilm ? editableFilm.id : -1} 
+          film={editableFilm}
+          addFilm={(film) => {props.saveNewFilm(film); setShowForm(false);}}
+          editFilm={(film) => {props.updateFilm(film); setShowForm(false);}}
+          cancel={() => setShowForm(false)} />
+        // setEditableFilm() avoids that the add form would show the data of a past edited film  
+        : <Button variant="primary" size="lg" className="fixed-right-bottom" onClick={() => { setShowForm(true); setEditableFilm(); } }>&#43;</Button>
+      }
+    </>
+  );
 }
   
 function FilmRow(props) {
-    
-    const [isChecked, setIsChecked] = useState(props.filmData.favorite);
-    
-    useEffect(() => {
-      setIsChecked(props.filmData.favorite);
-    }, [props.filmData.favorite]);
 
-    const handleCheckboxChange = (event) => {
-      setIsChecked(event.target.checked);
-      props.filmData.favorite = event.target.checked;
-      props.handleSave(props.filmData);
-    };
-
+    const formatWatchDate = (dayJsDate, format) => {
+      return dayJsDate ? dayJsDate.format(format) : '';
+    }
+  
     return(
       <tr>
+        <td>
+          <Button variant='primary' onClick={() => {
+            props.setShowForm(true); 
+            props.setEditableFilm(props.filmData);
+          }}>
+            <i className="bi bi-pencil-square"/>
+          </Button>
+        </td>
         <td>
            <p className={props.filmData.favorite ? "favorite" : ""} >
             {props.filmData.title}
           </p>
         </td>
         <td>
-          <Form.Check type="checkbox" label="Favorite" checked={isChecked} onChange={handleCheckboxChange}/>
+          <Form.Check type="checkbox" disabled={true} label="Favorite" checked={props.filmData.favorite ? true : false}/>
         </td>
         <td>
-          <small>{dayjs(props.filmData.watchDate).format('MMMM D, YYYY')}</small>
+          <small>{formatWatchDate(props.filmData.watchDate, 'MMMM D, YYYY')}</small>
         </td>
         <td>
           <Rating rating={props.filmData.rating} maxStars={5}/>
-        </td>
-        <td>
-          <Button variant="danger" onClick={() => props.deleteFilm(props.filmData.id)}>DELETE</Button>{' '}
-          <Button variant="primary" onClick={() => props.handleEdit(props.filmData.id)}>EDIT</Button>
         </td>
       </tr>
     );
@@ -113,4 +74,4 @@ function Rating(props) {
   )
 }
 
-export { FilmTable };
+export default FilmLibrary;

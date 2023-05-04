@@ -1,28 +1,36 @@
 /*
  * [2022/2023]
  * 01UDFOV Applicazioni Web I / 01TXYOV Web Applications I
- * Lab 7
+ * Lab 6
  */
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css';
 
-import { Container } from 'react-bootstrap';
-import { BrowserRouter, Outlet, Route, Routes, useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
 
-import { HomePage } from './components/HomePage';
-import { NavigationResponsive } from './components/Navigation';
-import { PageNotFound } from './components/PageNotFound';
-import { useState } from 'react';
+import { React, useState } from 'react';
+import { Container, Row, Col } from 'react-bootstrap/'
 
-function App(){
-  const [ activeFilter, setActiveFilter ] = useState('filter-all');
-  
-  const changeFilter = (filter) => {
-    setActiveFilter((oldFilter) => {oldFilter = filter; return oldFilter;});
-  }
+import FILMS from './films'
 
+import {Navigation} from './components/Navigation';
+import Filters from './components/Filters';
+import FilmLibrary from './components/FilmLibrary';
+
+function App() {
+
+  // This state contains the active filter
+  const [activeFilter, setActiveFilter] = useState('filter-all');
+
+  /**
+   * Defining a structure for Filters
+   * Each filter is identified by a unique name and is composed by the following fields:
+   * - A label to be shown in the GUI
+   * - An ID (equal to the unique name), used as key during the table generation
+   * - A filter function applied before passing the films to the FilmTable component
+   */
   const filters = {
     'filter-all':       { label: 'All', id: 'filter-all', filterFunction: () => true},
     'filter-favorite':  { label: 'Favorites', id: 'filter-favorite', filterFunction: film => film.favorite},
@@ -30,40 +38,59 @@ function App(){
     'filter-lastmonth': { label: 'Seen Last Month', id: 'filter-lastmonth', filterFunction: film => isSeenLastMonth(film)},
     'filter-unseen':    { label: 'Unseen', id: 'filter-unseen', filterFunction: film => film.watchDate ? false : true}
   };
+
   const isSeenLastMonth = (film) => {
-    if('watchDate' in film) {  // Accessing watchDate only if defined
+    if('watchDate' in film && film.watchDate) {  // Accessing watchDate only if defined
       const diff = film.watchDate.diff(dayjs(),'month')
       const isLastMonth = diff <= 0 && diff > -1 ;      // last month
       return isLastMonth;
     }
-  }
-
-  return <BrowserRouter>
-    <Routes>
-      <Route element={<MainLayout />}>
-        <Route index element={<HomePage filters={filters} activeFilter={filters['filter-all']} onSelect={changeFilter}/>} />
-        <Route path={`/${activeFilter}`} element={<HomePage filters={filters} activeFilter={activeFilter} onSelect={changeFilter}/>}/>
-        {/** TO DO: ADD AND EDIT ROUTES */}
-        <Route path='*' element={<PageNotFound />} />
-      </Route>
-    </Routes>
-  </BrowserRouter>;
-
 }
 
-function MainLayout() {
-  
-  return <>
-    <header>
-      <NavigationResponsive />
-    </header>
-    <main>
-      <Container fluid>
-        <Outlet />
-      </Container>
-    </main>
+  // This state contains the list of films (it is initialized from a predefined array).
+  const [films, setFilms] = useState(FILMS);
 
-  </>
+  // This state contains the last film ID (the ID is continuously incremented and never decresead).
+  const [lastFilmId, setLastFilmId] = useState(FILMS[FILMS.length-1].id + 1);
+
+  // This function add the new film into the FilmLibrary array
+  const saveNewFilm = (newFilm) => {
+    setFilms( (films) => [...films, {"id": lastFilmId, ...newFilm}] );
+    setLastFilmId( (id) => id + 1 );
+  }
+
+  // This function updates a film already stored into the FilmLibrary array
+  const updateFilm = (film) => {
+    setFilms(oldFilms => {
+      return oldFilms.map(f => {
+        if(film.id === f.id)
+          return { "id": film.id, "title": film.title, "favorite": film.favorite, "watchDate": film.watchDate, "rating": film.rating };
+        else
+          return f;
+      });
+    });
+  }
+
+  return (
+    <Container fluid className='App'>
+
+      <Navigation/>
+
+      <Row className="vh-100">
+        <Col md={4} xl={3} bg="light" className="below-nav" id="left-sidebar">
+          <Filters items={filters} selected={activeFilter} onSelect={setActiveFilter}/>
+        </Col>
+
+        { /* </Collapse> */}
+        <Col md={8} xl={9} className="below-nav">
+          <h1 className="pb-3">Filter: <span className="notbold">{filters[activeFilter].label}</span></h1>
+          <FilmLibrary films={films.filter(filters[activeFilter].filterFunction)}
+                       saveNewFilm={saveNewFilm} updateFilm={updateFilm}/>
+        </Col>
+      </Row>
+
+    </Container>
+  );
 }
 
 export default App;
