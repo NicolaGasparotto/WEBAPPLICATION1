@@ -16,7 +16,7 @@ const Filters = (props) => {
         {
           Object.keys(items).map(filterName => {
             return (
-              <NavLink key={filterName} to={`/filter/${filterName}`} style={{ textDecoration: 'none' }} onClick={() => props.setActiveFilter(filterName)}>
+              <NavLink key={filterName} to={`/filter/${filterName}`} style={{ textDecoration: 'none' }}>
               <ListGroup.Item as="li" key={filterName} 
                 action active={selected === filterName ? true : false} 
                 style={{border: '0.1', borderRadius: '4px'}}>

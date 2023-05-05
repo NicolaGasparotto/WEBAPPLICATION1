@@ -20,7 +20,7 @@ import Filters from './components/Filters';
 import FilmLibrary from './components/FilmLibrary';
 import { PageNotFound } from './components/PageNotFound';
 
-import { BrowserRouter, Outlet, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 
 function App() {
 
@@ -34,6 +34,8 @@ function App() {
     'SeenLasstMonth': { filterFunction: film => isSeenLastMonth(film)},
     'Unseen':    { filterFunction: film => film.watchDate ? false : true}
   };
+
+  const defaultFilter = 'All';
 
   const isSeenLastMonth = (film) => {
     if('watchDate' in film && film.watchDate) {  // Accessing watchDate only if defined
@@ -75,10 +77,12 @@ function App() {
    */
   return <BrowserRouter>
       <Routes>
-        <Route element={<DefaultLayout filters={filters} activeFilter={activeFilter} setActiveFilter={setActiveFilter}/>}>
-          <Route index element={<MainLayout filters={filters} activeFilter={activeFilter} films={films} updateFilm={updateFilm} saveNewFilm={saveNewFilm}/>}/>
+        <Route element={<DefaultLayout filters={filters}/>}>
+          <Route index element={<MainLayout filters={filters}
+                                            films={films} updateFilm={updateFilm} saveNewFilm={saveNewFilm} />}/>
           {Object.keys(filters).map(key => (
-          <Route key={key} path={`/filter/${key}`} element={<MainLayout filters={filters} activeFilter={activeFilter} films={films} updateFilm={updateFilm} saveNewFilm={saveNewFilm} />}/>
+          <Route key={key} path={`/filter/${key}`} element={<MainLayout filters={filters}
+                                                                        films={films} updateFilm={updateFilm} saveNewFilm={saveNewFilm} />}/>
           ))}
           <Route path='*' element={<PageNotFound/>}/>
         </Route>
@@ -88,15 +92,20 @@ function App() {
 }
 
 function DefaultLayout(props){
+  
+  const location = useLocation();
+  const filterName = location.pathname.split('/').pop();
+  const activeFilter = props.filters[filterName] ?  filterName : 'All';
+
   return <>
     <header>
-      <NavigationResponsive />
+      <NavigationResponsive/>
     </header>
     <main>
       <Container fluid>
         <Row className="vh-100">
           <div className="d-md-block col-md-3 col-12 bg-light below-nav collapse" id="left-sidebar">
-            <Col><Filters items={props.filters} selected={props.activeFilter} setActiveFilter={props.setActiveFilter}/></Col>
+            <Col><Filters items={props.filters} selected={activeFilter}/></Col>
           </div>
           <Col style={{marginTop: '5rem'}} >
             <Outlet />
@@ -109,7 +118,11 @@ function DefaultLayout(props){
 }
 
 function MainLayout(props){
-  const activeFilter = props.activeFilter;
+  
+  const location = useLocation();
+  const filterName = location.pathname.split('/').pop();
+  const activeFilter = props.filters[filterName] ?  filterName : 'All';
+  
   const filters = props.filters;
   const films = props.films;
   const saveNewFilm = props.saveNewFilm;
