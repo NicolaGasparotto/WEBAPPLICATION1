@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 
 import {useState} from 'react';
 import {Form, Button} from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 
 const FilmForm = (props) => {
@@ -14,7 +15,9 @@ const FilmForm = (props) => {
   const [title, setTitle] = useState(props.film ? props.film.title : '');
   const [favorite, setFavorite] = useState(props.film ? props.film.favorite : false);
   const [watchDate, setWatchDate] = useState((props.film && props.film.watchDate) ? props.film.watchDate.format('YYYY-MM-DD') : dayjs().format('YYYY-MM-DD'));
-  const [rating, setRating] = useState(props.film ? props.film.rating : 0);
+  const [rating, setRating] = useState((props.film && props.film.rating !== undefined) ? props.film.rating : 0);
+
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -33,6 +36,8 @@ const FilmForm = (props) => {
     }
     else
       props.addFilm(film);
+    
+    navigate('/'); /// redirecting to the home page -> dovrebbe re-render to the previous page --> to be implemented
   }
 
   return (

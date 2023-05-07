@@ -21,11 +21,10 @@ import FilmLibrary from './components/FilmLibrary';
 import { PageNotFound } from './components/PageNotFound';
 
 import { BrowserRouter, Outlet, Route, Routes, useLocation } from 'react-router-dom';
+import { AddFilmPage } from './components/AddFilmPage';
+import { EditFilmPage } from './components/EditFilmPage';
 
 function App() {
-
-  // This state contains the active filter
-  const [activeFilter, setActiveFilter] = useState('All');
 
   const filters = {
     'All':       { filterFunction: () => true},
@@ -34,8 +33,6 @@ function App() {
     'SeenLasstMonth': { filterFunction: film => isSeenLastMonth(film)},
     'Unseen':    { filterFunction: film => film.watchDate ? false : true}
   };
-
-  const defaultFilter = 'All';
 
   const isSeenLastMonth = (film) => {
     if('watchDate' in film && film.watchDate) {  // Accessing watchDate only if defined
@@ -69,6 +66,9 @@ function App() {
     });
   }
 
+  const deleteFilm = (filmId) => {
+      setFilms((oldFilms) => oldFilms.filter((f) => f.id !== filmId));
+  };
   /**
    * [2022/2023]
    * Is important to observe that all the <Route> components are nested inside the MAIN <Route> component,
@@ -82,8 +82,11 @@ function App() {
                                             films={films} updateFilm={updateFilm} saveNewFilm={saveNewFilm} />}/>
           {Object.keys(filters).map(key => (
           <Route key={key} path={`/filter/${key}`} element={<MainLayout filters={filters}
-                                                                        films={films} updateFilm={updateFilm} saveNewFilm={saveNewFilm} />}/>
+                                                                        films={films} updateFilm={updateFilm} saveNewFilm={saveNewFilm} deleteFilm={deleteFilm}/>}/>
           ))}
+          <Route path='/edit/:filmId' element={<EditFilmPage films={films} updateFilm={updateFilm}/>} />
+          {/**               In line function declaration vvvvvvvvvvvvvvvvvvvvvvvvvvvv    */}
+          <Route path='/add' element={<AddFilmPage addFilm={(film) => saveNewFilm(film)}/>} />
           <Route path='*' element={<PageNotFound/>}/>
         </Route>
       </Routes>
@@ -130,8 +133,7 @@ function MainLayout(props){
 
   return <>
       <h1 className="pb-3">Filter: <span className="notbold">{activeFilter}</span></h1>
-          <FilmLibrary films={films.filter(filters[activeFilter].filterFunction)}
-                       saveNewFilm={saveNewFilm} updateFilm={updateFilm}/>
+          <FilmLibrary films={films.filter(filters[activeFilter].filterFunction)} updateFilm={updateFilm} deleteFilm={props.deleteFilm}/>
     </>
   ;
 }

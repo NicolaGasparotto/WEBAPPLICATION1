@@ -1,71 +1,75 @@
 import 'dayjs';
 
 import { Table, Form, Button } from 'react-bootstrap/'
-import { useState } from 'react';
-
-import FilmForm from './FilmForm';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function FilmLibrary(props) {
   const filteredFilms = props.films;
 
-  // This state is used for displaying the form
-  const [showForm, setShowForm] = useState(false);
-
-  // This state stores the current film when an *edit* button is pressed.
-  const [editableFilm, setEditableFilm] = useState();
+  const navigate = useNavigate();
 
   return (
     <>
       <Table striped>
         <tbody>
-          { filteredFilms.map((film) => <FilmRow key={film.id} filmData={film} setEditableFilm={setEditableFilm} setShowForm={setShowForm}/>) }
+          { filteredFilms.map((film) => <FilmRow key={film.id} filmData={film} updateFilm={props.updateFilm} deleteFilm={props.deleteFilm}/>) }
         </tbody>
       </Table>
-      {showForm ?
-        <FilmForm key={editableFilm ? editableFilm.id : -1} 
-          film={editableFilm}
-          addFilm={(film) => {props.saveNewFilm(film); setShowForm(false);}}
-          editFilm={(film) => {props.updateFilm(film); setShowForm(false);}}
-          cancel={() => setShowForm(false)} />
-        // setEditableFilm() avoids that the add form would show the data of a past edited film  
-        : <Button variant="primary" size="lg" className="fixed-right-bottom" onClick={() => { setShowForm(true); setEditableFilm(); } }>&#43;</Button>
-      }
+      <Button variant="primary" size="lg" className="fixed-right-bottom" onClick={() => { navigate('/add'); } }>&#43;</Button>
     </>
   );
 }
   
 function FilmRow(props) {
 
-    const formatWatchDate = (dayJsDate, format) => {
-      return dayJsDate ? dayJsDate.format(format) : '';
-    }
+  const [isChecked, setIsChecked] = useState(props.filmData.favorite);
+
+  const formatWatchDate = (dayJsDate, format) => {
+    return dayJsDate ? dayJsDate.format(format) : '';
+  }
   
-    return(
-      <tr>
-        <td>
-          <Button variant='primary' onClick={() => {
-            props.setShowForm(true); 
-            props.setEditableFilm(props.filmData);
-          }}>
-            <i className="bi bi-pencil-square"/>
-          </Button>
-        </td>
-        <td>
-           <p className={props.filmData.favorite ? "favorite" : ""} >
-            {props.filmData.title}
-          </p>
-        </td>
-        <td>
-          <Form.Check type="checkbox" disabled={true} label="Favorite" checked={props.filmData.favorite ? true : false}/>
-        </td>
-        <td>
-          <small>{formatWatchDate(props.filmData.watchDate, 'MMMM D, YYYY')}</small>
-        </td>
-        <td>
-          <Rating rating={props.filmData.rating} maxStars={5}/>
-        </td>
-      </tr>
-    );
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setIsChecked(props.filmData.favorite);
+  }, [props.filmData.favorite]);
+
+  const handleCheckboxChange = (event) => {
+    setIsChecked(event.target.checked);
+    props.filmData.favorite = event.target.checked;
+    props.updateFilm(props.filmData);
+  };
+
+  return(
+    <tr>
+      <td>
+        <Button variant='primary' onClick={() => {
+          navigate('/edit/' + props.filmData.id);
+        }}>
+          <i className="bi bi-pencil-square"/>
+        </Button>
+        {' '}
+        <Button variant='danger'> 
+          <i className="bi bi-trash" onClick={() => { props.deleteFilm(props.filmData.id) }} />
+        </Button>
+      </td>
+      <td>
+          <p className={props.filmData.favorite ? "favorite" : ""} >
+          {props.filmData.title}
+        </p>
+      </td>
+      <td>
+        <Form.Check type="checkbox" label="Favorite" checked={isChecked} onChange={handleCheckboxChange}/>
+      </td>
+      <td>
+        <small>{formatWatchDate(props.filmData.watchDate, 'MMMM D, YYYY')}</small>
+      </td>
+      <td>
+        <Rating rating={props.filmData.rating} maxStars={5}/>
+      </td>
+    </tr>
+  );
 }
 
 function Rating(props) {
