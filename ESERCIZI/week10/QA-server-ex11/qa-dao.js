@@ -1,5 +1,5 @@
 'use strict';
-
+// dao means data access object
 const { Question, Answer } = require('./qa');
 
 const dayjs = require('dayjs');
@@ -24,7 +24,7 @@ function readQuestion(id) {
 
 function createQuestion(question) {
     return new Promise((resolve, reject) => {
-        const sql = 'INSERT INTO question(text, author, date) VALUES(?,?,?,?)';
+        const sql = 'INSERT INTO question(text, author, date) VALUES(?,?,?)';
         // NOTE: question.id is ignored because the database will generate an auto-incremental ID
         db.run(sql, [question.text, question.author, question.date.toISOString()], (err) => {
             if (err)
