@@ -30,7 +30,7 @@ function App() {
     'All':       { filterFunction: () => true},
     'Favorite':  { filterFunction: film => film.favorite},
     'Best':      { filterFunction: film => film.rating >= 5},
-    'SeenLasstMonth': { filterFunction: film => isSeenLastMonth(film)},
+    'SeenLastMonth': { filterFunction: film => isSeenLastMonth(film)},
     'Unseen':    { filterFunction: film => film.watchDate ? false : true}
   };
 
@@ -40,7 +40,7 @@ function App() {
       const isLastMonth = diff <= 0 && diff > -1 ;      // last month
       return isLastMonth;
     }
-}
+  }
 
   // This state contains the list of films (it is initialized from a predefined array).
   const [films, setFilms] = useState(FILMS);
