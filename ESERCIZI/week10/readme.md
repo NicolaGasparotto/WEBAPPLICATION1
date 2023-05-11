@@ -2,8 +2,10 @@ IN THIS CASE WE ARE ON THE SERVER SIDE -> express is for the server
 in the future this system will co operate with the other part of the application in react 
 that is on the client side.
 
+The development of a webserver is an incremental job, so is better to have a documentation as a guide.
+
 DAO -> Data Access Object
-The development of a webserver is an incremental job, so is better to have a documentation as a guide:
+
 
 - Create a new Question 
         
