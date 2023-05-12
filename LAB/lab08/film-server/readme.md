@@ -15,4 +15,15 @@
     - dao-films.js: is used to implement the DAO class for Film class -> implements the methods to interact with the database.db file
     - database.db: is the database file
 
- 
+- API ACTIONS:
+
+    - GET /api/'filter' returns the list of all films THAT BELONGS TO THE SPECIFIC FILTER in the database
+                        (filters are: 'all', 'favorite', 'bestRated', 'unseen', 'lastmonth')
+
+    - GET /api/films/:id returns the film with the given id (if exists)
+    
+    - POST /api/films adds a new film to the database
+    
+    - PUT /api/films/:id updates all the params passed, in the film with the given id (if exists)
+    
+    - DELETE /api/films/:id deletes the film with the given id (if exists)

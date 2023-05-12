@@ -31,7 +31,6 @@ function getAllFilms(){
                 return;
             }
             const films = rows.map((e) => new Film(e.id, e.title, e.favorite, e.watchdate, e.rating));
-            console.log(films);
             resolve(films);
         });
     });
@@ -105,6 +104,7 @@ function getSeenLastMonthFilms(){
     });
 };
 
+// TO DO: implement a way to declare the keys of tha cases from a input element that will be the same for all the structures fot filter in the fututre
 exports.getFilmsByFilter = (filter) => {
   switch(filter){
         case 'favorite':
@@ -125,26 +125,91 @@ exports.getFilmsByFilter = (filter) => {
 
 
 // Retrieves a film, given its “id”.
-exports.getFilm = () => {
+exports.getFilm = (id) => {
+    return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM films WHERE id=?';
+      db.get(sql, [id], (err, row) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        if (row == undefined) {
+          resolve({error: 'Question not found.'});
+        } else {
+          const film = new Film(row.id, row.title, row.favorite, row.watchdate, row.rating);
+          resolve(film);
+        }
+      });
+    });
 };
 
 // Creates a new film, by providing all relevant information – except the “id” that will be automatically assigned by the back-end.
-exports.createFilm = () => {
+exports.createFilm = (film) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'INSERT INTO films(title, favorite, watchdate, rating, user) VALUES(?,?,?,?,1)';
+        db.run(sql, [film.title, film.favorite, film.watchdate, film.rating], function(err) {
+            if(err){
+                reject(err);
+                return;
+            }
+            resolve(this.changes); // 
+        });
+    });
 };
 
 // Updates an existing film, by providing all the relevant information, i.e., all the properties except the “id” will overwrite the current properties of the existing film. The “id” will not change after the update.
-exports.updateFilm = () => {    
+exports.updateFilm = (film) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'UPDATE films SET title=?, favorite=?, watchdate=?, rating=? WHERE id=?';
+        db.run(sql, [film.title, film.favorite, film.watchdate, film.rating, film.id], function(err) {
+            if(err){
+                reject(err);
+                return;
+            }
+            resolve(this.changes); // returns how many rows were changed
+        });
+    });
 };
 
 // Updates the rating of a specific film.
-exports.updateRating = () => {
+exports.updateRating = (film, newRating) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'UPDATE films SET rating=? WHERE id=?';
+        db.run(sql, [newRating, film.id], function(err) {
+            if(err){
+                reject(err);
+                return;
+            }
+            resolve(this.changes);
+        });
+    });
 };
 
 // Marks an existing film as favorite/unfavorite.
-exports.markFavorite = () => {
+exports.markFavorite = (film, newFavorite) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'UPDATE films SET favorite=? WHERE id=?';
+        db.run(sql, [newFavorite, film.id], function(err) {
+            if(err){
+                reject(err);
+                return;
+            }
+            resolve(this.changes);
+        });
+    });
 };
 
 // Deletes an existing film, given its “id”.
-exports.deleteFilm = () => {
+exports.deleteFilm = (id) => {
+    return new Promise((resolve, reject) => {
+        const sql = 'DELETE FROM films WHERE id=?';
+        db.run(sql, [id], function(err) {
+            if(err){
+                reject(err);
+                return;
+            }
+            resolve(this.changes);
+        });
+    });
 };
 
