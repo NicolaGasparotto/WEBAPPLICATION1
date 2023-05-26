@@ -1,0 +1,35 @@
+GET http://localhost:3000/api/all
+### 
+GET http://localhost:3000/api/unseen
+###
+GET http://localhost:3000/api/film/2
+###
+
+// ADD A NEW FILM
+POST http://localhost:3000/api/add
+Content-Type: application/json
+
+{
+    "title": "The Godfather",
+    "watchdate": "2023-05-01",
+    "author": "Francis Ford Coppola",
+    "rating": 4,
+    "favorite": true
+}
+
+### 
+// IMPORTANT: TO SEE THE CHANGES INSIDE THE DB YOU HAVE TO RESTART THE SQLITE EXPLORER
+// EDIT A FILM
+PUT http://localhost:3000/api/edit/6
+Content-Type: application/json
+
+{
+    "title": "The Godfather",
+    "watchdate": "2023-04-15",
+    "author": "Francis Ford Coppola",
+    "rating": 4,
+    "favorite": false
+}
+
+###
+DELETE http://localhost:3000/api/film/6
